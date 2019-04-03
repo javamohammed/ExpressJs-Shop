@@ -1,0 +1,38 @@
+<%- include('../layouts/header.ejs') %>
+
+    <link rel="stylesheet" href="/css/forms.css">
+    <link rel="stylesheet" href="/css/product.css">
+</head>
+
+<body>
+
+<%- include('../layouts/navbar.ejs')%>
+
+    <main>
+        <form class="product-form" action="<%=action%>" method="POST">
+         <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+            <div class="form-control">
+                <label for="title">Title</label>
+                <input type="text" value="<%if(editing){%><%= product.title %><%}%>" name="title" id="title">
+            </div>
+            <div class="form-control">
+                <label for="imageUrl">Image Url</label>
+                <input type="text" value="<%if(editing){%><%= product.imageUrl %><%}%>" name="imageUrl" id="imageUrl">
+            </div>
+            <div class="form-control">
+                <label for="price">Price</label>
+                <input type="number"  value="<%if(editing){%><%= product.price %><%}%>" name="price" id="price" step="0.01">
+            </div>
+            <div class="form-control">
+                <label for="description">Description</label>
+                <textarea name="description" id="description" rows="5"><%if(editing){%><%= product.description %><%}%></textarea>
+            </div>
+            <% if(editing) { %>
+                <input type="hidden" value="<%= product._id %>" name="prodId" id="imageUrl">
+            <%}%>
+
+            <button class="btn" type="submit"><% if(editing){%>Update<%}else{%>Add<%}%> Product</button>
+        </form>
+    </main>
+
+<%- include('../layouts/footer.ejs')%>

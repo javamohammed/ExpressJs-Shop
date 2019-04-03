@@ -1,0 +1,37 @@
+<%- include('../layouts/header.ejs') %>
+
+
+    <link rel="stylesheet" href="/css/product.css">
+</head>
+
+<body>
+
+<%- include('../layouts/navbar.ejs')%>
+    <main>
+        <%if(products.length > 0){%>
+        <ul>
+            <% products.forEach( pro => {%>
+                <p>
+                    <li>
+                        <%= pro.productId.title%> (<%= pro.quantity%>)
+                        <form action="/cart-delete-item" method="POST">
+                            <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                            <input type="hidden" value="<%= pro.productId._id %>" name="prodId" id="prodId">
+                                <button class="btn" type="submit">Delete</button>
+                        </form>
+                    </li>
+                </p>
+
+            <%})%>
+        </ul>
+        <hr>
+        <div>
+         <form method="POST" action="/create-order">
+            <button class="btn">Order Now!</button>
+        </form>
+        </div>
+        <%}else{%>
+            <h2>No products in cart !</h2>
+        <%}%>
+    </main>
+<%- include('../layouts/footer.ejs')%>
