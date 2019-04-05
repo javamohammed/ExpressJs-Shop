@@ -1,2 +1,6 @@
+git add a.html
+git add b.html
+git commit -m "Changes for a and b"
+
 git remote add origin git@github.com:javamohammed/ExpressJs-Shop.git
 git push -u origin master

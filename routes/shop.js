@@ -1,25 +1,25 @@
-const express = require('express')
-const shopController = require('../controllers/shop')
-const csrf = require('csurf')
+const path = require('path');
 
-const router = express.Router()
-const csrfProtection = csrf({
-    cookie: true
-})
+const express = require('express');
 
-router.get('/', shopController.getIndex)
+const shopController = require('../controllers/shop');
 
-router.get('/products', shopController.getAllProducts)
+const router = express.Router();
 
+router.get('/', shopController.getIndex);
 
-router.get('/products/:productId', shopController.getProduct)
+router.get('/products', shopController.getProducts);
 
-router.post('/cart', shopController.postCart)
-router.get('/cart', csrfProtection, shopController.getCart)
-router.post('/cart-delete-item', csrfProtection, shopController.postDeleteCartProduct)
+router.get('/products/:productId', shopController.getProduct);
 
-router.post('/create-order', shopController.postOrders)
-router.get('/orders', shopController.getOrders)
+router.get('/cart', shopController.getCart);
 
+router.post('/cart', shopController.postCart);
 
-module.exports = router
+router.post('/cart-delete-item', shopController.postCartDeleteProduct);
+
+router.post('/create-order', shopController.postOrder);
+
+router.get('/orders', shopController.getOrders);
+
+module.exports = router;

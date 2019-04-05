@@ -1,21 +1,24 @@
-const express = require('express')
-const adminController = require('../controllers/admin')
-const csrf = require('csurf')
+const path = require('path');
 
-const router = express.Router()
-const csrfProtection = csrf({ cookie: true })
+const express = require('express');
 
-router.get('/add-product', csrfProtection, adminController.getAddProducts)
-router.post('/add-product', csrfProtection, adminController.postAddProducts)
+const adminController = require('../controllers/admin');
 
+const router = express.Router();
 
-router.get('/edit-product/:productId', csrfProtection, adminController.getEditProducts)
-router.post('/edit-product', csrfProtection, adminController.postEditProducts)
+// /admin/add-product => GET
+router.get('/add-product', adminController.getAddProduct);
 
-router.post('/delete-product', csrfProtection, adminController.postDeleteProducts)
+// /admin/products => GET
+router.get('/products', adminController.getProducts);
 
-router.get('/products', csrfProtection, adminController.getAllProducts)
+// /admin/add-product => POST
+router.post('/add-product', adminController.postAddProduct);
 
+router.get('/edit-product/:productId', adminController.getEditProduct);
 
+router.post('/edit-product', adminController.postEditProduct);
 
-module.exports = router
+router.post('/delete-product', adminController.postDeleteProduct);
+
+module.exports = router;

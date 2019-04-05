@@ -1,50 +1,59 @@
-const express = require('express')
-const bodyParser = require('body-parser')
-const path = require('path')
-const cookieParser = require('cookie-parser')
-const mongoose = require('mongoose')
+const path = require('path');
 
-const adminRoutes = require('./routes/admin')
-const shopRouters = require('./routes/shop')
+const express = require('express');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const session = require('express-session')
+const MongoDBStore = require('connect-mongodb-session')(session)
 
-const errorsController = require('./controllers/errors')
+const MONGODB_URI = "mongodb+srv://nodejs_test:gebY1FajvcIYDHPG@cluster0-kmqgy.mongodb.net/shop";
 
-const User = require('./models/user')
+const errorController = require('./controllers/error');
+const User = require('./models/user');
 
+const app = express();
 
-const app = express()
+const store =new  MongoDBStore({
+    uri: MONGODB_URI,
+    collection: 'sessions'
+})
+app.use(session({
+    secret: 'my secret',
+    resave: false,
+    saveUninitialized: false,
+    store: store
+}))
+app.set('view engine', 'ejs');
+app.set('views', 'views');
 
+const adminRoutes = require('./routes/admin');
+const shopRoutes = require('./routes/shop');
+const authRoutes = require('./routes/auth');
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
-     User.findById('5ca486de771f210afcb18c7b')
+    if (!req.session.user) {
+        return next();
+    }
+    User.findById(req.session.user._id)
         .then(user => {
-             req.user = user
-        //console.log(Object.keys(req.user.__proto__));
-            next()
-        }).catch(err => console.log(err))
-})
+            req.user = user;
+            next();
+        })
+        .catch(err => console.log(err));
+});
 
-/*
-require('express-debug')(app, {
+app.use('/admin', adminRoutes);
+app.use(shopRoutes);
+app.use(authRoutes);
 
-});*/
+app.use(errorController.get404);
 
-app.set('view engine', 'ejs')
-app.set('views', 'views')
-
-// we need this because "cookie" is true in csrfProtection
-app.use(cookieParser())
-
-app.use(bodyParser.urlencoded({extended:false}))
-app.use(express.static(path.join(__dirname, 'public')))
-app.use('/admin', adminRoutes)
-app.use(shopRouters)
-
-
-app.use(errorsController.get404Page)
-
-const uri = "mongodb+srv://nodejs_test:gebY1FajvcIYDHPG@cluster0-kmqgy.mongodb.net/shop?retryWrites=true";
-mongoose.connect(uri,{useNewUrlParser: true}).then( () =>
+mongoose.connect(MONGODB_URI, {
+        useNewUrlParser: true
+    }).then(() =>
 {
     /*
     const user = new User({name:'Mido', email:'mido@gmail.com',items:[]})
